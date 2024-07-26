@@ -1,0 +1,262 @@
+% I want to write a letter about proving things of ordinals.
+
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+% Theorems
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+
+% Definitions
+\newtheorem{definition}{Definition}
+\newtheorem{notation}{Notation}
+\newtheorem{notations}{Notations}
+
+% Delimiters
+\newcommand{\parens}[1]{\left( {#1} \right)}
+\newcommand{\brackets}[1]{\left[ {#1} \right]}
+\newcommand{\braces}[1]{\left\{ {#1} \right\}}
+
+% Macros
+\newcommand{\setcomp}[2]{\braces{{#1} : {#2}}}
+\newcommand{\ii}[1]{{\iota}_{#1}}
+\newcommand{\kk}[1]{{\kappa}_{#1}}
+\newcommand{\pp}[1]{{\pi}_{#1}}
+\newcommand{\CC}{\mathcal{C}}
+
+\begin{document}
+
+\section{Ordinals}
+
+In this section the logic is always MSO, and the structures are ordinals.
+
+\begin{notations}
+    Let $\ii{\alpha} \parens{X}$ denote
+    that the set $X$ is a closed interval isomorphic to $\alpha$.
+
+    Let $\pp{\alpha} \parens{X}$ denote
+    that the set $X$ is a finite union of intervals and is isomorphic to $\alpha$.
+
+    Let $\kk{\alpha} \parens{x}$ denote
+    that $x$ is a multiple of $\alpha$.
+\end{notations}
+
+
+\begin{proposition}
+    Let $\alpha = \omega^\beta$ be an ordinals
+    and $x, y \in \alpha$ some elements.
+
+    Then,
+    $\brackets{x, y}$ is isomorphic to $\alpha$
+    iff there exists some $z$ which is a multiple of $\alpha$,
+    such that $y$ is the least greater multiple of $\alpha$ and $z \le x < y$.
+\end{proposition}
+
+\begin{proof}
+    Divide $x = \gamma \cdot \alpha + \delta$ where $\delta < \alpha$, and as $x + \alpha = y$,
+    $y = \gamma \cdot \alpha + \delta + \alpha$.
+
+    Now, as $\alpha$ is additively indecomposable, $\delta + \alpha = \alpha$,
+    so $y = \gamma \cdot \alpha + \alpha = \parens{\gamma + 1} \cdot \alpha$.
+    Choosing $z = \gamma + 1$, indeed $y$ is the least greter multiple of $\alpha$,
+    and $z \le x < y$, as we need.
+\end{proof}
+
+\begin{corollary}
+    Let $\alpha = \omega^\beta$.
+    Over ordinals, $\ii{\alpha}$ is expressible via $\kk{\alpha}$.
+\end{corollary}
+
+\begin{proof}
+    By the previous lemma,
+    $$\ii{\alpha} \parens{X}
+    \iff
+    \exists x, y, z. 
+           X = \brackets{x, y}
+    \wedge \kk{z}
+    \wedge y = \min_a \setcomp{a}{z < a
+    \wedge \kk{\alpha} \parens{a}}$$
+\end{proof}
+
+\begin{proposition}
+    Let $\alpha = \omega^\beta$.
+    Then, a set $X$ satisfies $\pp{\alpha}$ iff it is a finite sum
+    $X = \sum_{i=1}^m X_i$ where for $i<m$, $X_i$ is a strict prefix
+    of some interval satisfying $\ii{\alpha}$, and
+    for $i = m$, $X_i$ satisfies $\ii{\alpha}$.
+\end{proposition}
+
+\begin{proof}
+    Suppose $X_i$ is indeed an interval which is less then $\alpha$ for $i < m$
+    and equals $\alpha$ for $i = m$.
+    Since $\alpha$ is additively indecomposable,
+    the sum $\sum_{i=1}^m X_i$ is indeed $\alpha$.
+    Therefore, $X$ is a disjoint sum of intervals isomorphic to $\alpha$.
+
+    For the other direction,
+    suppose $X$ is a disjoint sum of intervals isomorphic to $\alpha$.
+    Let the intervals be $X_i$ for $i = 1, ..., m$.
+    Since $\alpha$ is additively indecomposable,
+    nessessarily $X_i < \alpha$ for $i < m$ and $X_m = \alpha$.
+    
+    Also, note that for $i < m$, the interval from the left end of $X_i$ to the
+    right end of $X_m$ is at least $\alpha$,
+    since it contains $X_i \cup X_m$ which is isomorphic to $\alpha$,
+    and thus there is an interval in which $X_i$ is contained
+    which is isomorphic to $\alpha$.
+\end{proof}
+
+\begin{corollary}
+    Let $\alpha = \omega^\beta$.
+    Then $\pp{\alpha}$ is expressible via $\ii{\alpha}$.
+\end{corollary}
+
+\begin{proof}
+    By the previous corollary,
+    it is enough to formulate that there
+    exists a finite set of left endpoints and right endpoints,
+    such that except for the last ones,
+    All the intervals are strictly the prefix of
+    an interval isomorphic to $\alpha$,
+    and such that the last interval is
+    isomorphic to $\alpha$.
+
+    $$\pp{\alpha} \parens{X}
+    \iff
+    \exists L \exists R.
+           finite \parens{L}
+    \wedge finite \parens{R}
+    \wedge \min \parens{L \cup R} \in L
+    \wedge \max \parens{L \cup R} \in R
+    \wedge
+    \forall x, y \in L. x < y \implies \exists z \in R. x < z < y
+    \wedge
+    \forall x, y \in R. x < y \implies \exists z \in L. x < z < y
+    \wedge
+    \parens
+    {
+        \forall x \in L - \braces{\max L}
+        \forall y \in R - \braces{\max R}
+        \exists z. y < z \wedge \ii{\brackets{x, z}}
+    }
+    \wedge
+    \ii{\braces{\max L, \max R}}
+    $$
+
+\end{proof}
+
+\begin{proposition}
+    Let $\alpha$ be any ordinal.
+    Let the cantor decomposition be
+    $$\alpha = \sum_{i=1}^k \alpha_i$$ where $\alpha_i = \omega^{\beta_i}$.
+
+    Then, a set $X$ satisfies $\pp{\alpha}$ iff it is an ordered sum
+    $X = \sum_{i=1}^k X_i$ where $X_i$ satisfies $\pp{\alpha_i}$.
+\end{proposition}
+
+\begin{proof}
+    Obviously a disjoint sum of such
+    intervals satisfies $\pp{\alpha}$.
+
+    For the other direction, suppose $X$ is a union
+    of closed intervals and
+    is isomorphic to $\alpha$.
+    Let $\varphi : X \to \alpha$ be the isomorphism map.
+    Recall that $\alpha = \sum_{i=1}^k Y_i$ where
+    $Y_i \cong \alpha_i$.
+    
+    Let $X_i := \varphi^{-1}(Y_i)$ for $i = 1, ..., k$.
+    Then it can easily be seen that $X_i$ is
+    a disjoint sum of closed intervals.
+\end{proof}
+
+\begin{corollary}
+    Let $\alpha$ be any ordinal.
+    Then $\pp{\alpha}$ is expressible via $\pp{\alpha_1}, ..., \pp{\alpha_k}$
+    for some ordinals
+    $\alpha_1 = \omega^{\beta_1}, ..., \alpha_k = \omega^{\beta_k}$.
+\end{corollary}
+
+\begin{proof}
+    This is pretty much the same trick as the previous corrollary,
+    but is very tedious to write down.
+\end{proof}
+
+\begin{theorem}
+    Let $\alpha$ be any ordinal.
+
+    Over ordinals, $\pp{\alpha}$ is expressible via
+    $\kk{\alpha_1}, ..., \kk{\alpha_k}$
+    where $\alpha_1 = \omega^{\beta_1}, ..., \alpha_k = \omega^{\beta_k}$.
+\end{theorem}
+
+\begin{proof}
+    Combine the three previous corollaries.
+\end{proof}
+
+\begin{definition}
+    Let $\alpha > 0$ be a nonzero ordinal.
+
+    Let $\xi$ be any ordinal.
+    Let $\gamma$ and $\delta$ be the unique ordinals
+    such that $\xi = \gamma \alpha + \delta$.
+
+    Then, define $\xi / \alpha := \gamma$.
+
+    That is, $\xi / \alpha$ is the quotient of $\xi$ by $\alpha$, "rounded down".
+
+    Now, suppose $\CC$ be a class of ordinals.
+
+    Define $\CC_{/\alpha} := \setcomp{\xi / \alpha}{\xi \in \CC}$
+
+    Define $\CC_{\alpha\mid}
+    := \setcomp{\delta_{\alpha \nmid \xi} }{\xi \in \CC}
+     = \setcomp{0}{\xi \in \CC, \alpha \mid \xi}
+     \cup \setcomp{1}{\xi \in \CC, \alpha \nmid \xi}$.
+
+\end{definition}
+
+\begin{theorem}
+    Let $\CC$ be a class of ordinals,
+    and let $\alpha_1=\omega^{\beta_1}, ..., \alpha_k=\omega^{\beta_k}$ be ordinals,
+    where $\beta_1 \ge \cdots \ge \beta_k$, that is, $\alpha_k \mid \cdots \mid \alpha_1$.
+    
+    There is a computable function from a fully-quantified formula
+    $\varphi$ in $$MSO \brackets{\kk{\alpha_1}, ..., \kk{\alpha_k}}$$
+    to fully-quantified formulae $\psi, \chi$ in $$MSO \brackets{\kk{\frac{\alpha_1}{\alpha_k}}, ..., \kk{\frac{\alpha_{k-1}}{\alpha_k}}}$$
+
+    such that $\varphi$ is true over $\CC$ iff
+    $\psi$ is true over $\CC_{/\alpha_k} + 1$.
+\end{theorem}
+
+\begin{proof}
+    Denote $\alpha := \alpha_k$.
+
+    By the composition theorem, given $\varphi$ of quantifier rank $\rho$,
+    we can compute $\psi'$,
+    with free variables $\braces{X_\tau}_\tau$,
+    where $\tau$ is a $\rho$-type.
+
+    such that for any $\xi = \sum_{i \in \xi / \alpha} \xi_i + \delta$,
+    for $\delta < \alpha$,
+    
+    (denoting $\xi_{\xi / \alpha} := \delta$ we get $\xi = \sum_{i \in \xi / \alpha + 1} \xi_i$),
+    $$\xi \vDash \varphi \iff \xi/\alpha + 1, Q_1, ..., Q_r\vDash \psi'$$
+
+    where $Q_\tau = \setcomp{\xi_i \vDash \tau}{i \in \xi / \alpha + 1}$
+
+    Now, let $\upsilon(X)$ be the formula $X \subseteq \braces{max} \vee X^\complement \subseteq \braces{max}$
+    (that is, up to the maximal element, $X$ is all or nothing).
+
+    Then, set $\psi := "\forall \tau" \forall X_t \upsilon(X_t) \implies \psi'$.
+    
+    TBC.
+    
+\end{proof}
+
+\end{document}
