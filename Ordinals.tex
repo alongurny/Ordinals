@@ -23,7 +23,7 @@
 \newcommand{\braces}[1]{\left\{ {#1} \right\}}
 
 % Macros
-\newcommand{\setcomp}[2]{\braces{{#1} : {#2}}}
+\newcommand{\setcomp}[1]{\braces{#1}}
 \newcommand{\ii}[1]{{\iota}_{#1}}
 \newcommand{\kk}[1]{{\kappa}_{#1}}
 \newcommand{\pp}[1]{{\pi}_{#1}}
@@ -79,8 +79,7 @@ In this section the logic is always MSO, and the structures are ordinals.
     \exists x, y, z. 
            X = \brackets{x, y}
     \wedge \kk{z}
-    \wedge y = \min_a \setcomp{a}{z < a
-    \wedge \kk{\alpha} \parens{a}}$$
+    \wedge y = \min_a \setcomp{a : z < a \wedge \kk{\alpha} \parens{a}}$$
 \end{proof}
 
 \begin{proposition}
@@ -206,18 +205,14 @@ In this section the logic is always MSO, and the structures are ordinals.
     Let $\gamma$ and $\delta$ be the unique ordinals
     such that $\xi = \gamma \alpha + \delta$.
 
-    Then, define $\xi / \alpha := \gamma$.
+    Then, define $\xi / \alpha := \gamma$ and $\xi \% \alpha := \delta$.
 
     That is, $\xi / \alpha$ is the quotient of $\xi$ by $\alpha$, "rounded down".
 
     Now, suppose $\CC$ be a class of ordinals.
 
-    Define $\CC_{/\alpha} := \setcomp{\xi / \alpha}{\xi \in \CC}$
-
-    Define $\CC_{\alpha\mid}
-    := \setcomp{\delta_{\alpha \nmid \xi} }{\xi \in \CC}
-     = \setcomp{0}{\xi \in \CC, \alpha \mid \xi}
-     \cup \setcomp{1}{\xi \in \CC, \alpha \nmid \xi}$.
+    Define $\CC_{/\alpha} := \setcomp{\xi / \alpha : \xi \in \CC}$
+    Define $\CC_{\% \alpha} := \setcomp{\xi \% \alpha : \xi \in \CC}$
 
 \end{definition}
 
@@ -226,12 +221,12 @@ In this section the logic is always MSO, and the structures are ordinals.
     and let $\alpha_1=\omega^{\beta_1}, ..., \alpha_k=\omega^{\beta_k}$ be ordinals,
     where $\beta_1 \ge \cdots \ge \beta_k$, that is, $\alpha_k \mid \cdots \mid \alpha_1$.
     
-    There is a computable function from a fully-quantified formula
-    $\varphi$ in $$MSO \brackets{\kk{\alpha_1}, ..., \kk{\alpha_k}}$$
-    to fully-quantified formulae $\psi, \chi$ in $$MSO \brackets{\kk{\frac{\alpha_1}{\alpha_k}}, ..., \kk{\frac{\alpha_{k-1}}{\alpha_k}}}$$
+    Then the logic $MSO \brackets{\kk{\alpha_1}, ..., \kk{\alpha_k}}$
+    is decidable over $\CC$,
 
-    such that $\varphi$ is true over $\CC$ iff
-    $\psi$ is true over $\CC_{/\alpha_k} + 1$.
+    using oracles to decide $MSO \brackets{\kk{\alpha_1}, ..., \kk{\alpha_{k-1}}}$
+    over $\alpha$ and over $\CC_{\% \alpha_k}$ and
+    decide $MSO$ over $\CC_{/\alpha_k}$.
 \end{theorem}
 
 \begin{proof}
@@ -246,17 +241,94 @@ In this section the logic is always MSO, and the structures are ordinals.
     for $\delta < \alpha$,
     
     (denoting $\xi_{\xi / \alpha} := \delta$ we get $\xi = \sum_{i \in \xi / \alpha + 1} \xi_i$),
-    $$\xi \vDash \varphi \iff \xi/\alpha + 1, Q_1, ..., Q_r\vDash \psi'$$
-
-    where $Q_\tau = \setcomp{\xi_i \vDash \tau}{i \in \xi / \alpha + 1}$
-
-    Now, let $\upsilon(X)$ be the formula $X \subseteq \braces{max} \vee X^\complement \subseteq \braces{max}$
-    (that is, up to the maximal element, $X$ is all or nothing).
-
-    Then, set $\psi := "\forall \tau" \forall X_t \upsilon(X_t) \implies \psi'$.
     
-    TBC.
+    $$
+    \xi \vDash \varphi \iff \xi/\alpha + 1, Q_1, ..., Q_r\vDash \psi'
+    $$
+
+    where $Q_\tau = \setcomp{\xi_i \vDash \tau : i \in \xi / \alpha + 1}$
+
+    Now, since the $Q_\tau$ are all (except maybe the last index) or
+    nothing (except including maybe last the index),
+    we can actually describe them with two propositional/boolean variables.
+    That is, we can replace each time $X_\tau$ appears in $\psi'$,
+    by $\setcomp{i < \max : y_\tau} \cup \setcomp{\max : z_\tau}$
+    where $y_\tau$ and $z_\tau$ are two new propositional variables, and then:
+
+    $$
+    \xi \vDash \varphi \iff \xi/\alpha + 1, Y_1, Z_1, ..., Y_r, Z_r\vDash \psi''
+    $$
+
+    where $Y_\tau := \alpha \vDash \tau$,
+    and $Z_\tau := \delta \vDash \tau$,
+    and $\psi''$ is $\psi'$ after the replacement.
+
+    Therefore, given a class $\CC$ of ordinals,
+    we first determine for each $\tau$ what $Y_\tau$ is,
+    using the fact that $\alpha$ is decidable over $MSO \brackets{\kk{\alpha_1}, ..., \kk{\alpha_{k-1}}}$,
+    and that over $\alpha$ we can replace $\kk{\alpha_k}$ with $=0$.
+
+    Now, we calculate all the possible values of $Z_\tau$: for that,
+    we check if $\tau$ holds in all of $\CC_{\% \alpha}$, and if
+    $\neg \tau$ holds in all of $\CC_{\% \alpha}$.
+
+    This is possible since $\CC_{\% \alpha}$ is decidable over $MSO \brackets{\kk{\alpha_1}, ..., \kk{\alpha_{k-1}}}$,
+    and again, we can replace $\kk{\alpha_k}$ with $=0$.
+
+    Finally, for each possible combination of values
+    $Y_1, Z_1, ..., Y_r, Z_r$, we calculate whether $\psi''$ holds over
+    $\CC_{/\alpha}$. This is possible since $MSO$ is decidable over $\CC_{/\alpha}$.
     
+
+    Then, suppose that $\varphi$ holds over all $\xi \in \CC$.
+
+    Then, it must be the case that
+    $\psi''$ holds for any such combination. 
+
+    And also for the contrary, every ordinal $\xi \in \CC$ gives rise to some combination.
+\end{proof}
+
+\begin{corollary}
+    Suppose in the previous theorem that $\CC$ is either:
+    \begin{enumerate}
+        \item a \textbf{single countable} ordinal: $\CC = \setcomp{\xi}$
+        \item the class of \textbf{all countable} ordinals
+    \end{enumerate}
+    Then $MSO \brackets{\kk{\alpha_1}, ..., \kk{\alpha_k}}$ is decidable.
+\end{corollary}
+
+\begin{proof}
+    For a single countable ordinal $\xi$:
+    $\alpha$ over $MSO \brackets{\kk{\alpha_1}, ..., \kk{\alpha_{k-1}}}$
+    is decidable by induction on $k$ (for the induction step),
+    since $MSO$ is decidable over a single countable ordinal (for the base case)
+
+    $\CC_{/\alpha} = \setcomp{\xi/\alpha}$ again is decidable for the same reason.
+
+    and $\CC_{\% \alpha} = \setcomp{\xi \% \alpha}$ 
+    is a single countable ordinal and so $MSO$ is decidable over it.
+
+
+    Now, suppose $\CC$ is the class of all countable ordinals,
+    then $CC_{/ \alpha} = \CC$,
+    so $MSO \brackets{\kk{\alpha_1}, ..., \kk{\alpha_{k-1}}}$ is decidable
+    over it by induction on $k$, or since $MSO$ is decidable over
+    the class of all countable ordinals (in the base case),
+
+    and $\CC_{\% \alpha} = \setcomp{\delta : \delta < \alpha}$.
+    $MSO$ is decidable over it, since a formula
+    $\varphi$ is true over $\setcomp{\delta : \delta < \alpha}$
+    iff $\varphi \vee \exists X. \kk{\alpha}$ is true over the class
+    of all countable ordinals, and we have already established that
+    this $MSO \brackets{\kk{\alpha}}$ is decidable over a single countable ordinal.
+\end{proof}
+
+\begin{theorem}
+    Under the same conditions, $MSO \brackets{\pp{\alpha_1}, ..., \pp{\alpha_k}}$ is decidable.
+\end{theorem}
+
+\begin{proof}
+    Combine all the results we have had so far.
 \end{proof}
 
 \end{document}
